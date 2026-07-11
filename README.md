@@ -2,110 +2,81 @@
 
 ## Overview
 
-This project is a simple task management application developed using modern JavaScript. It allows users to add tasks, update their priority, mark tasks as completed, and delete tasks when they are no longer needed. The application also stores tasks using **localStorage**, allowing them to remain available even after refreshing the browser.
+A simple task management app built with modern JavaScript. You can add tasks, set their priority, mark them complete, and delete them. Tasks save to localStorage, so they're still there after a refresh.
 
-The project was based on a starter codebase that contained several intentional errors and incomplete features. The aim of this project was to identify those issues, fix them, and improve the application by applying JavaScript best practices, object-oriented programming, functional programming techniques, DOM manipulation, and automated testing with Jest.
-
----
+The project started as a starter codebase full of intentional bugs and missing features. The goal was to find and fix all of it while applying proper JavaScript practices - OOP, functional programming, DOM manipulation, and testing with Jest.
 
 ## Errors Found
 
-During the review of the starter code, several problems were identified across different areas of the project. Some of the major issues included:
+- var used instead of let/const, one variable declared with no keyword at all
+- = used instead of === inside a conditional (sneaky one - silently overwrote data instead of throwing)
+- == used in a few places instead of ===
+- An off-by-one loop error and a separate infinite loop from a missing increment
+- A function missing a required parameter
+- A recursive function with no base case
+- Task class missing an id property and a way to toggle completion
+- SubTask never calling super(), breaking inheritance
+- No destructuring, template literals, spread/rest, or ES6 modules anywhere
+- Broken DOM selectors, no null checks before touching the page
+- No event delegation, no JSON/localStorage handling
+- Barely any real tests, no error handling anywhere
 
-* Variables declared using `var` instead of `let` or `const`.
-* Missing variable declarations that created unintended global variables.
-* Incorrect use of comparison operators such as `==` and assignment operators (`=`) inside conditions.
-* Loop errors, including off-by-one mistakes and an infinite loop.
-* Functions with missing parameters and incomplete logic.
-* Missing validation and error handling.
-* Classes with missing properties and methods.
-* Incorrect inheritance caused by a missing `super()` call.
-* No use of modern JavaScript features such as destructuring, template literals, spread operators, or rest parameters.
-* Incorrect DOM selectors and missing event handling.
-* No support for saving data using JSON and `localStorage`.
-* Incomplete Jest tests with limited coverage.
-
-A complete list of identified issues is included in the **issues-identified.txt** document.
-
----
+Full breakdown in issues-identified.txt.
 
 ## Fixes Implemented
 
-The following improvements were made to complete the project:
-
-* Replaced all `var` declarations with `let` and `const`.
-* Corrected comparison and assignment operator mistakes.
-* Fixed all loop and conditional statement errors.
-* Added parameter validation and meaningful error messages.
-* Implemented proper recursion with a base case.
-* Added unique task IDs and a method for marking tasks as completed.
-* Corrected inheritance by adding the missing `super()` call.
-* Improved the `TaskManager` object by adding additional methods.
-* Replaced repetitive loops with modern array methods such as `map()`, `filter()`, `reduce()`, `find()`, `some()`, and `every()`.
-* Added object and array destructuring where appropriate.
-* Used template literals throughout the project to improve readability.
-* Implemented spread and rest operators to simplify data handling.
-* Fixed DOM selectors and improved event handling.
-* Added `JSON.stringify()` and `JSON.parse()` for saving and loading task data.
-* Implemented `localStorage` to preserve tasks between browser sessions.
-* Added multiple `try...catch` blocks and input validation to improve reliability.
-
----
+- Replaced every var with let/const, fixed the == and = mistakes
+- Fixed the loop bugs (off-by-one and the infinite loop)
+- Added a proper base case to the recursive function
+- Gave Task an id property and a toggleCompletion() method
+- Fixed SubTask's missing super() call, expanded TaskManager
+- Swapped manual loops for map/filter/reduce/find/some/every
+- Added destructuring, template literals, spread/rest operators
+- Split code into ES6 modules (app.js, dom.js, utils.js)
+- Fixed DOM selectors, added null checks before any DOM access
+- Added one delegated event listener for the whole task list
+- Added JSON.stringify/JSON.parse and localStorage save/load
+- Added try/catch blocks and parameter validation throughout
 
 ## Features Added
 
-The completed application includes several additional features, including:
-
-* Creating new tasks.
-* Updating task priority.
-* Marking tasks as completed.
-* Deleting tasks.
-* Automatic saving using `localStorage`.
-* Automatic loading of saved tasks.
-* Task statistics.
-* Modern JavaScript features such as destructuring, template literals, spread operators, and ES6 modules.
-
----
+- Add, update, complete, and delete tasks
+- Tasks persist automatically via localStorage
+- Live task statistics (e.g. "2 of 5 completed")
+- Add Task button disables itself until a title is typed
+- Full ES6 module structure
 
 ## Running the Application
 
-1. Clone or download the project.
-2. Open the project folder.
-3. Install the project dependencies by running:
+1. Clone or download the repo
+2. Install dependencies:
 
 ```bash
 npm install
 ```
 
-4. Start the application by opening **index.html** in your browser.
+3. The app uses ES6 modules, so opening index.html directly won't work (browsers block module imports over file://). Serve it locally instead:
 
----
+```bash
+npx serve .
+```
+
+4. Open the local address it prints (usually http://localhost:3000). Because chrome browser may block the file if its dragged and dropped, but they always accept it if it comes as a server
 
 ## Running the Tests
-
-Run the following command to execute the Jest test suite:
 
 ```bash
 npm test
 ```
 
-All tests should pass successfully after the project has been completed.
-
----
+All 32 tests should pass.
 
 ## Screenshots
 
-The **screenshots** folder contains images showing:
-
-* The application running successfully in the browser.
-* The browser console without any errors.
-* Jest test results.
-* The completed task management interface.
-
----
+The screenshots folder has the app running, the console with no errors, and the Jest test results.
 
 ## Reflection
 
-Working on this project improved my understanding of debugging JavaScript applications and applying modern JavaScript features. One of the biggest challenges was identifying logical errors that did not immediately produce visible errors, such as incorrect comparison operators and loop conditions. Another challenge was restructuring the project into separate ES6 modules while ensuring that all files communicated correctly using imports and exports.
+The trickiest bug was = instead of === in updateTaskPriority - it doesn't throw anything, it just quietly corrupts the task id, so it only shows up later once something else depends on that id being right. The missing super() in SubTask was the opposite: obvious immediately, since JavaScript won't let you touch `this` before super() runs in a subclass constructor.
 
-Overall, this project strengthened my understanding of JavaScript fundamentals, object-oriented programming, functional programming, DOM manipulation, error handling, and testing with Jest.
+Splitting everything into ES6 modules took some getting used to, mainly making sure app.js, dom.js, and utils.js imported and exported the right things. I also hit a CORS issue the first time I opened index.html directly, since ES modules can't load over file:// - had to serve it locally instead.
