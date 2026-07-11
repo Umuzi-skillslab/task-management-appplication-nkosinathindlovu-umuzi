@@ -1,15 +1,22 @@
 {
-  "name": "task-manager-starter",
+  "name": "task-manager",
   "version": "1.0.0",
-  "description": "Task Management Application - Starter Code",
-  "main": "app.js",
+  "description": "A task management application built with modern JavaScript.",
+  "main": "src/app.js",
   "scripts": {
     "test": "jest"
+  },
+  "jest": {
+    "testEnvironment": "jsdom"
   },
   "keywords": ["tasks", "javascript"],
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "jest": "^29.0.0"
+    "@babel/core": "^7.24.0",
+    "@babel/preset-env": "^7.24.0",
+    "babel-jest": "^29.7.0",
+    "jest": "^29.0.0",
+    "jest-environment-jsdom": "^29.7.0"
   }
 }

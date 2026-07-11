@@ -1,0 +1,56 @@
+Issues Identified in the Starter Code
+
+Variables & Operators
+- taskList had no let/const at all, and taskCounter used var - both
+  fixed to const/let.
+- updateTaskPriority used = instead of === inside an if statement, so
+  instead of comparing task IDs it was silently overwriting the ID.
+  Took a while to notice since it never throws an error.
+- A few comparisons in utils.js used == instead of ===, risking type
+  coercion bugs.
+- No typeof checks existed anywhere, so wrong-type input just failed
+  quietly downstream instead of at the source.
+
+Control Flow
+- displayAllTasks looped one index too far (off-by-one).
+- findTaskByTitle's while loop never incremented its counter - a
+  classic infinite loop.
+- Everything used regular for loops even where for...of would've been
+  more readable, so I swapped those in.
+
+Functions
+- findTaskByTitle was missing its title parameter entirely.
+- countCompletedTasks (recursive) had no base case, so it would
+  recurse past the array's end and crash.
+- Almost no array methods were used, just manual loops. Rewrote
+  several functions using map/filter/reduce/find/some/every.
+
+OOP
+- Task had no id property, so tasks couldn't be reliably referenced.
+- No way to toggle completed status - added toggleCompletion().
+- SubTask's constructor skipped super() completely, which breaks in
+  real JS since `this` can't be touched before super() runs.
+- TaskManager only had getTotalTasks() - added more methods, including
+  one that accepts a predicate function.
+
+Modern JavaScript
+- No destructuring, spread/rest operators, or template literals - just
+  string concatenation everywhere.
+- Nothing was set up as ES6 modules, so files depended entirely on
+  script load order and global variables.
+
+DOM & Events
+- The add-task button was grabbed with getElementById() using a class
+  selector - wrong method, so it could never find it.
+- No null checks before touching the DOM.
+- No event delegation, so clicking individual tasks did nothing.
+- Listeners were set up before the page finished loading, so they
+  sometimes failed to attach.
+- No localStorage or JSON handling, so tasks disappeared on refresh.
+
+Testing & Error Handling
+- The starter test file barely had real tests and never reset state
+  between them.
+- Practically no input validation anywhere.
+- No try/catch blocks, so bad input could crash the whole app instead
+  of failing gracefully.

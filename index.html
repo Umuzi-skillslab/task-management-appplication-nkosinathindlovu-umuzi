@@ -9,28 +9,30 @@
 <body>
     <div class="container">
         <h1>Task Management System</h1>
-        
-        <div class="add-task-section">
+
+        <form class="add-task-section">
             <h2>Add New Task</h2>
-            <!-- Form with issues -->
-            <input type="text" id="title" placeholder="Task Title">
+            <input type="text" id="title" placeholder="Task title" required>
             <input type="text" id="description" placeholder="Description">
-            <!-- Missing: priority input -->
-            <button class="add-task-btn">Add Task</button>
-        </div>
-        
-        <div class="task-list" id="task-list">
-            <!-- Tasks will be displayed here -->
-        </div>
-        
+            <select id="priority">
+                <option value="1">Low priority</option>
+                <option value="2">Medium priority</option>
+                <option value="3">High priority</option>
+            </select>
+            <button type="submit" class="add-task-btn">Add Task</button>
+        </form>
+
         <div class="statistics">
-            <!-- Missing: statistics display -->
+            <!--Will be Filled in dynamically by dom.js -->
+        </div>
+
+        <div class="task-list" id="task-list">
+            <!-- The Tasks are rendered here by dom.js -->
         </div>
     </div>
-    
-    <!-- Scripts loaded in wrong order -->
-    <script src="dom.js"></script>
-    <script src="app.js"></script>
-    <!-- Missing: module script -->
+
+    <!-- dom.js is an ES module and imports app.js/utils.js itself,
+         so this is the only script tag the page needs. -->
+    <script type="module" src="src/dom.js"></script>
 </body>
 </html>
