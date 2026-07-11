@@ -1,67 +1,178 @@
-// DOM Manipulation - Starter Code with Errors
+// DOM manipulation layer - this is the only file allowed to touch
+// `document` directly. It renders tasks to the page, wires up all the
+// event listeners, and connects the app's data (from app.js) to
+// persistent storage (from utils.js).
 
-// Missing: proper DOM selectors
-function setupEventListeners() {
-    // Wrong selector method
-    var addButton = document.getElementById(".add-task-btn");  // Wrong - mixing ID and class
-    var taskInput = document.querySelector("task-input");  // Missing #
-    
-    // Missing: null checks before adding listeners
-    addButton.addEventListener("click", handleAddTask);
-    
-    // Missing: other event listeners for form submission, etc.
-}
+import { addTask, taskList, TaskManager } from "./app.js";
+import { saveToStorage, loadFromStorage } from "./utils.js";
 
-// Function with DOM manipulation errors
-function handleAddTask() {
-    var titleInput = document.getElementById("title");
-    var descInput = document.getElementById("description");
-    
-    // No validation
-    // Should use event.preventDefault() if form
-    
-    var title = titleInput.value;
-    var description = descInput.value;
-    
-    // Missing: priority input
-    
-    addTask(title, description, 1);
-    displayTasks();
-    
-    // Missing: clear inputs after adding
-}
-
-// Function that should use better selectors
+/*
+    Render every task in taskList into the #task-list container.
+    Clears out old content first so tasks never get duplicated
+    on re-render.
+*/
 function displayTasks() {
-    var container = document.getElementById("task-list");
-    
-    // Should clear existing content first
-    // Missing: null check
-    
-    // Inefficient - should use template literals and insertAdjacentHTML
-    for (var i = 0; i < taskList.length; i++) {
-        var div = document.createElement("div");
-        div.innerHTML = "<h3>" + taskList[i].title + "</h3>";
-        div.innerHTML = div.innerHTML + "<p>" + taskList[i].description + "</p>";
-        container.appendChild(div);
-        
-        // Missing: task ID, completion status, event handlers for delete/complete
+    const container = document.getElementById("task-list");
+
+    if (!container) {
+        console.error("displayTasks: #task-list element was not found.");
+        return;
+    }
+
+    container.innerHTML = "";
+
+    if (taskList.length === 0) {
+        container.innerHTML = "<p>No tasks yet. Add one above.</p>";
+        return;
+    }
+
+    for (const task of taskList) {
+        const taskDiv = document.createElement("div");
+        taskDiv.className = "task";
+        taskDiv.dataset.taskId = task.id;
+
+        taskDiv.innerHTML = `
+            <h3>${task.title}</h3>
+            <p>${task.description}</p>
+            <p>Priority: ${task.priority} | Status: ${task.completed ? "Completed" : "Pending"}</p>
+            <button data-action="toggle">Toggle Done</button>
+            <button data-action="delete">Delete</button>
+        `;
+
+        container.appendChild(taskDiv);
+    }
+
+    renderStatistics();
+}
+
+/*
+    Show a simple count of completed vs total tasks.
+*/
+function renderStatistics() {
+    const statsContainer = document.querySelector(".statistics");
+
+    if (!statsContainer) {
+        return;
+    }
+
+    const completedCount = taskList.filter(task => task.completed).length;
+    statsContainer.innerHTML = `<p>${completedCount} of ${taskList.length} tasks completed</p>`;
+}
+
+/*
+    Handle submitting the "Add Task" form.
+*/
+function handleAddTask(event) {
+    event.preventDefault();
+
+    const titleInput = document.getElementById("title");
+    const descInput = document.getElementById("description");
+    const priorityInput = document.getElementById("priority");
+
+    if (!titleInput || !descInput) {
+        console.error("handleAddTask: required input fields were not found.");
+        return;
+    }
+
+    const title = titleInput.value.trim();
+    const description = descInput.value.trim();
+    const priority = priorityInput ? Number(priorityInput.value) : 1;
+
+    if (title.length === 0) {
+        console.warn("handleAddTask: a task title is required.");
+        return;
+    }
+
+    const newTask = addTask(title, description, priority);
+
+    if (newTask) {
+        saveToStorage(taskList);
+        displayTasks();
+        titleInput.value = "";
+        descInput.value = "";
     }
 }
 
-// Function with event handling issues
-function handleTaskClick(event) {
-    // Missing: event.target check
-    // Missing: proper event delegation
-    
-    var taskId = event.target.id;  // Wrong way to get task ID
-    
-    // Should toggle task completion
-    console.log("Task clicked: " + taskId);
+/*
+    Handle clicks anywhere inside the task list using event delegation,
+    instead of attaching a separate listener to every single task.
+    This means newly added tasks are handled automatically too.
+*/
+function handleTaskListClick(event) {
+    const button = event.target.closest("button[data-action]");
+
+    if (!button) {
+        return;
+    }
+
+    const taskDiv = button.closest("[data-task-id]");
+
+    if (!taskDiv) {
+        return;
+    }
+
+    const taskId = Number(taskDiv.dataset.taskId);
+    const task = taskList.find(t => t.id === taskId);
+
+    if (!task) {
+        return;
+    }
+
+    if (button.dataset.action === "toggle") {
+        task.completed = !task.completed;
+    } else if (button.dataset.action === "delete") {
+        const index = taskList.findIndex(t => t.id === taskId);
+        if (index !== -1) {
+            taskList.splice(index, 1);
+        }
+    }
+
+    saveToStorage(taskList);
+    displayTasks();
 }
 
-// Missing: JSON conversion functions
-// Missing: functions to save/load tasks from localStorage
+/*
+    Attach every event listener the app needs.
+*/
+function setupEventListeners() {
+    const addButton = document.querySelector(".add-task-btn");
+    const form = document.querySelector(".add-task-section");
+    const taskListContainer = document.getElementById("task-list");
 
-// Initialize (wrong placement - should use DOMContentLoaded)
-setupEventListeners();
+    if (form) {
+        form.addEventListener("submit", handleAddTask);
+    } else if (addButton) {
+        // Fallback in case the button isn't inside a <form>.
+        addButton.addEventListener("click", handleAddTask);
+    } else {
+        console.error("setupEventListeners: add-task button/form not found.");
+    }
+
+    if (taskListContainer) {
+        taskListContainer.addEventListener("click", handleTaskListClick);
+    } else {
+        console.error("setupEventListeners: #task-list not found.");
+    }
+
+    window.addEventListener("beforeunload", () => saveToStorage(taskList));
+}
+
+/*
+    Bring back any tasks saved from a previous session before the
+    first render.
+*/
+function restoreSavedTasks() {
+    const savedTasks = loadFromStorage();
+
+    for (const savedTask of savedTasks) {
+        taskList.push(savedTask);
+    }
+}
+
+// Wait until the page has fully loaded before touching the DOM at all.
+document.addEventListener("DOMContentLoaded", () => {
+    restoreSavedTasks();
+    setupEventListeners();
+    displayTasks();
+    console.log(`Task Manager ready. ${TaskManager.getTotalTasks()} task(s) loaded.`);
+});
