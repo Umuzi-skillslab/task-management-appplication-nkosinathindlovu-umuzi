@@ -1,0 +1,48 @@
+Issues Identified in the Starter Code
+=====================================
+
+Variables & Operators
+---------------------
+- The taskList variable was created without using let or const, while taskCounter was declared using var. Both needed to be updated to use modern JavaScript variable declarations.
+- In the updateTaskPriority function, the assignment operator (=) was used instead of the comparison operator (===). This caused the task ID to be overwritten instead of being compared.
+- Some comparisons in utils.js used == instead of ===, which can lead to unexpected results because of type coercion.
+
+Control Flow
+------------
+- The loop inside displayAllTasks had an off-by-one error, causing it to access an array element that did not exist.
+- The while loop in findTaskByTitle never increased the loop counter, which would result in an infinite loop.
+- The starter code relied mainly on traditional for loops and did not make use of the more readable for...of loop where it was appropriate.
+
+Functions
+---------
+- The findTaskByTitle function was missing the title parameter, so there was no value available to search for.
+- The recursive countCompletedTasks function did not include a proper base case, which meant the recursion could continue until it caused an error.
+- Most of the functions used manual loops instead of modern array methods such as map(), filter(), reduce(), find(), some(), and every().
+
+Object-Oriented Programming
+---------------------------
+- The Task class did not have an id property, making it difficult to uniquely identify individual tasks.
+- There was no method for changing the completed status of a task.
+- The SubTask class did not call super() inside its constructor, which prevented it from correctly inheriting properties from the parent Task class.
+- The TaskManager object only contained one method and needed additional functionality to properly manage tasks.
+
+Modern JavaScript Features
+--------------------------
+- Object and array destructuring were not used anywhere in the project.
+- The spread and rest operators were missing even though they could simplify several parts of the code.
+- Most strings were built using concatenation instead of template literals, making the code harder to read.
+- The project did not use ES6 modules, so all files depended on global variables and the order in which scripts were loaded.
+
+DOM Manipulation & Events
+-------------------------
+- The Add Task button was selected incorrectly by using getElementById() with a class selector, which meant the element could never be found.
+- DOM elements were used without checking whether they actually existed first.
+- Event delegation was not implemented, making task interactions more difficult to manage.
+- Event listeners were attached before the page had fully loaded, which could cause JavaScript errors.
+- There was no support for saving tasks with localStorage, and JSON.stringify() and JSON.parse() were not used.
+
+Testing & Error Handling
+------------------------
+- The provided Jest test file contained incomplete imports, very few test cases, and did not reset data between tests.
+- There was little to no input validation throughout the application.
+- The project did not include try...catch blocks to handle unexpected errors, making it less reliable and harder to debug.
