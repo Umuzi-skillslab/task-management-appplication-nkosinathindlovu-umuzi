@@ -1,60 +1,111 @@
-[![Open in Visual Studio Code](https://classroom.github.com/assets/open-in-vscode-2e0aaae1b6195c2367325f4f02e2d04e9abb55f0b24a779b69b11b9e10269abc.svg)](https://classroom.github.com/online_ide?assignment_repo_id=24213019&assignment_repo_type=AssignmentRepo)
-# Task Manager - JavaScript Starter Code
+# Task Manager
 
-This is the starter codebase for your JavaScript task management application. The code is approximately 70% complete but contains errors, omissions, and areas that need significant improvement.
+## Overview
 
-## What's Included
+This project is a simple task management application developed using modern JavaScript. It allows users to add tasks, update their priority, mark tasks as completed, and delete tasks when they are no longer needed. The application also stores tasks using **localStorage**, allowing them to remain available even after refreshing the browser.
 
-- `app.js` - Core application logic (incomplete with errors)
-- `dom.js` - DOM manipulation code (incomplete with errors)
-- `index.html` - HTML structure (incomplete)
-- `app.test.js` - Jest tests (incomplete)
-- `package.json` - Project configuration
+The project was based on a starter codebase that contained several intentional errors and incomplete features. The aim of this project was to identify those issues, fix them, and improve the application by applying JavaScript best practices, object-oriented programming, functional programming techniques, DOM manipulation, and automated testing with Jest.
 
-## Errors and Omissions
+---
 
-The starter code contains intentional errors and missing features across all JavaScript topics including:
+## Errors Found
 
-- Variable scoping issues (var vs let vs const)
-- Missing error handling (try-catch blocks)
-- Incorrect operators and comparisons
-- Loop errors (for, while, for-of)
-- Missing array and object destructuring
-- No spread/rest operators
-- Missing template literals
-- Class and inheritance issues
-- Missing functional programming approaches
-- DOM selector errors
-- Event handling problems
-- Missing JSON operations
-- Incomplete Jest tests
-- Missing module exports/imports
+During the review of the starter code, several problems were identified across different areas of the project. Some of the major issues included:
 
-## Your Task
+* Variables declared using `var` instead of `let` or `const`.
+* Missing variable declarations that created unintended global variables.
+* Incorrect use of comparison operators such as `==` and assignment operators (`=`) inside conditions.
+* Loop errors, including off-by-one mistakes and an infinite loop.
+* Functions with missing parameters and incomplete logic.
+* Missing validation and error handling.
+* Classes with missing properties and methods.
+* Incorrect inheritance caused by a missing `super()` call.
+* No use of modern JavaScript features such as destructuring, template literals, spread operators, or rest parameters.
+* Incorrect DOM selectors and missing event handling.
+* No support for saving data using JSON and `localStorage`.
+* Incomplete Jest tests with limited coverage.
 
-1. Review all code files carefully
-2. Identify and fix all errors
-3. Complete all missing requirements
-4. Add proper error handling
-5. Implement modern JavaScript features
-6. Write comprehensive tests
-7. Ensure code follows best practices
+A complete list of identified issues is included in the **issues-identified.txt** document.
 
-## Getting Started
+---
 
-1. Install dependencies: `npm install`
-2. Review all JavaScript files
-3. Run tests: `npm test` (they will fail initially)
-4. Fix errors and complete missing features
-5. Re-run tests until all pass
+## Fixes Implemented
 
-## Testing
+The following improvements were made to complete the project:
 
-Run Jest tests with:
+* Replaced all `var` declarations with `let` and `const`.
+* Corrected comparison and assignment operator mistakes.
+* Fixed all loop and conditional statement errors.
+* Added parameter validation and meaningful error messages.
+* Implemented proper recursion with a base case.
+* Added unique task IDs and a method for marking tasks as completed.
+* Corrected inheritance by adding the missing `super()` call.
+* Improved the `TaskManager` object by adding additional methods.
+* Replaced repetitive loops with modern array methods such as `map()`, `filter()`, `reduce()`, `find()`, `some()`, and `every()`.
+* Added object and array destructuring where appropriate.
+* Used template literals throughout the project to improve readability.
+* Implemented spread and rest operators to simplify data handling.
+* Fixed DOM selectors and improved event handling.
+* Added `JSON.stringify()` and `JSON.parse()` for saving and loading task data.
+* Implemented `localStorage` to preserve tasks between browser sessions.
+* Added multiple `try...catch` blocks and input validation to improve reliability.
+
+---
+
+## Features Added
+
+The completed application includes several additional features, including:
+
+* Creating new tasks.
+* Updating task priority.
+* Marking tasks as completed.
+* Deleting tasks.
+* Automatic saving using `localStorage`.
+* Automatic loading of saved tasks.
+* Task statistics.
+* Modern JavaScript features such as destructuring, template literals, spread operators, and ES6 modules.
+
+---
+
+## Running the Application
+
+1. Clone or download the project.
+2. Open the project folder.
+3. Install the project dependencies by running:
+
+```bash
+npm install
 ```
+
+4. Start the application by opening **index.html** in your browser.
+
+---
+
+## Running the Tests
+
+Run the following command to execute the Jest test suite:
+
+```bash
 npm test
 ```
 
-Initially, tests will fail or be incomplete. Fix the code and add missing tests.
+All tests should pass successfully after the project has been completed.
 
-Good luck!
+---
+
+## Screenshots
+
+The **screenshots** folder contains images showing:
+
+* The application running successfully in the browser.
+* The browser console without any errors.
+* Jest test results.
+* The completed task management interface.
+
+---
+
+## Reflection
+
+Working on this project improved my understanding of debugging JavaScript applications and applying modern JavaScript features. One of the biggest challenges was identifying logical errors that did not immediately produce visible errors, such as incorrect comparison operators and loop conditions. Another challenge was restructuring the project into separate ES6 modules while ensuring that all files communicated correctly using imports and exports.
+
+Overall, this project strengthened my understanding of JavaScript fundamentals, object-oriented programming, functional programming, DOM manipulation, error handling, and testing with Jest.
