@@ -81,6 +81,11 @@ button:hover {
     background-color: #c9302c;
 }
 
+button:disabled {
+    background-color: #b0b8c9;
+    cursor: not-allowed;
+}
+
 .statistics {
     margin-bottom: 20px;
     padding: 14px 18px;

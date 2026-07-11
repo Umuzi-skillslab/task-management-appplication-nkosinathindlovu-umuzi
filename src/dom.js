@@ -27,16 +27,18 @@ function displayTasks() {
     }
 
     for (const task of taskList) {
+        const { id, title, description, priority, completed } = task;
+
         const taskDiv = document.createElement("div");
         taskDiv.className = "task";
-        taskDiv.dataset.taskId = task.id;
+        taskDiv.dataset.taskId = id;
 
         taskDiv.innerHTML = `
-            <h3>${task.title}</h3>
-            <p>${task.description}</p>
-            <p>Priority: ${task.priority} | Status: ${task.completed ? "Completed" : "Pending"}</p>
-            <button data-action="toggle">Toggle Done</button>
-            <button data-action="delete">Delete</button>
+            <h3>${title}</h3>
+            <p>${description}</p>
+            <p>Priority: ${priority} | Status: ${completed ? "Completed" : "Pending"}</p>
+            <button class="toggle-btn" data-action="toggle">Toggle Done</button>
+            <button class="delete-btn" data-action="delete">Delete</button>
         `;
 
         container.appendChild(taskDiv);
@@ -132,12 +134,25 @@ function handleTaskListClick(event) {
 }
 
 /*
+    Keeps the Add Task button disabled until the title field has
+    actual content, preventing empty tasks from ever being submitted.
+*/
+function handleTitleInput(event) {
+    const addButton = document.querySelector(".add-task-btn");
+    if (!addButton) {
+        return;
+    }
+    addButton.disabled = event.target.value.trim().length === 0;
+}
+
+/*
     Attach every event listener the app needs.
 */
 function setupEventListeners() {
     const addButton = document.querySelector(".add-task-btn");
     const form = document.querySelector(".add-task-section");
     const taskListContainer = document.getElementById("task-list");
+    const titleInput = document.getElementById("title");
 
     if (form) {
         form.addEventListener("submit", handleAddTask);
@@ -152,6 +167,14 @@ function setupEventListeners() {
         taskListContainer.addEventListener("click", handleTaskListClick);
     } else {
         console.error("setupEventListeners: #task-list not found.");
+    }
+
+    if (titleInput) {
+        titleInput.addEventListener("input", handleTitleInput);
+        // Start disabled, since the title field is empty on page load.
+        if (addButton) {
+            addButton.disabled = true;
+        }
     }
 
     window.addEventListener("beforeunload", () => saveToStorage(taskList));
