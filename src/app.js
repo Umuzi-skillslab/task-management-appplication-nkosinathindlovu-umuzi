@@ -1,156 +1,227 @@
-// Task Management Application - Starter Code with Errors
+// Core application logic: the Task/SubTask classes and functions that
+// create, find, and manage tasks. This file focuses purely on data and
+// Expected behavior - no DOM code lives here, so it can be tested without a browser.
 
-// Global variables (scoping issues)
-taskList = [];  // Missing var/let/const
-var taskCounter = 0;  // Should use let or const
+import { formatTaskName, isHighPriority, findTaskById } from "./utils.js";
 
-// Task class with errors
+// This array stores every task that gets created while the app is running.
+const taskList = [];
+// This number helps us give every task its own unique ID.
+let taskCounter = 0;
+
+/*
+    This class is used whenever a new task is created.
+    Each task stores its own information and can update itself.
+*/
 class Task {
     constructor(title, description, priority) {
-        this.title = title;
-        this.description = description;
+        // Check that the title is actually text.
+        if (typeof title !== "string") {
+            throw new Error("Task title must be a string.");
+        }
+        // Check that the description is text.
+        if (typeof description !== "string") {
+            throw new Error("Task description must be a string.");
+        }
+        // Priority should always be a number.
+        if (typeof priority !== "number") {
+            throw new Error("Priority must be a number.");
+        }
+
+        this.id = ++taskCounter;
+        this.title = formatTaskName(title);
+        this.description = description.trim();
         this.priority = priority;
         this.completed = false;
-        // Missing: id property
     }
-    
-    // Missing: method to toggle completion
-    
+
+    // Switch the task between complete and incomplete.
+    toggleCompletion() {
+        this.completed = !this.completed;
+    }
+
+    // Return a simple description of the task.
     getInfo() {
-        // Wrong string concatenation - should use template literals
-        return "Task: " + this.title + " - Priority: " + this.priority;
+        return `Task: ${this.title} | Priority: ${this.priority}`;
     }
 }
 
-// Subtask class with inheritance issues
+/*
+    A sub task works exactly like a normal task,
+    but it also remembers which parent task it belongs to.
+*/
 class SubTask extends Task {
     constructor(title, description, priority, parentTask) {
-        // Missing: super() call
+        super(title, description, priority);
+
+        if (typeof parentTask !== "string") {
+            throw new Error("parentTask must be a string.");
+        }
+
         this.parentTask = parentTask;
     }
+
+    getInfo() {
+        return `${super.getInfo()} | Parent Task: ${this.parentTask}`;
+    }
 }
 
-// Functions with errors
-
-// Function with no error handling
+/*
+    Create a new task and save it in the task list.
+*/
 function addTask(title, description, priority) {
-    var newTask = new Task(title, description, priority);  // Should use const
-    taskList.push(newTask);
-    taskCounter++;
-    return newTask;
-}
-
-// Function with incorrect loop
-function displayAllTasks() {
-    // Wrong loop - should use for-of
-    for (var i = 0; i <= taskList.length; i++) {  // Off-by-one error
-        console.log(taskList[i].title);
-    }
-}
-
-// Function missing parameter
-function findTaskByTitle() {
-    // Missing: title parameter
-    // Wrong loop construct
-    var i = 0;
-    while (i < taskList.length) {
-        if (taskList[i].title == title) {  // Should use ===
-            return taskList[i];
+    try {
+        if (
+            typeof title !== "string" ||
+            typeof description !== "string" ||
+            typeof priority !== "number"
+        ) {
+            throw new Error("Invalid task information.");
         }
-        // Missing: i++
+
+        const newTask = new Task(title, description, priority);
+        taskList.push(newTask);
+        return newTask;
+    } catch (error) {
+        console.error(error.message);
+        return null;
     }
+}
+
+/*
+    Display every task inside the console.
+    This function is mainly useful while debugging.
+*/
+function displayAllTasks() {
+    if (taskList.length === 0) {
+        console.log("No tasks available.");
+        return;
+    }
+
+    for (const task of taskList) {
+        console.log(task.getInfo());
+    }
+}
+
+/*
+    Find the first task that matches the given title exactly.
+    Returns undefined if nothing matches.
+*/
+function findTaskByTitle(title) {
+    if (typeof title !== "string") {
+        console.error("findTaskByTitle: title must be a string.");
+        return undefined;
+    }
+
+    for (const task of taskList) {
+        if (task.title === title) {
+            return task;
+        }
+    }
+
     return undefined;
 }
 
-// Function with type checking issues
+/*
+    Update the priority of an existing task, found by its ID.
+    Reuses findTaskById from utils.js instead of writing the
+    same lookup logic twice.
+*/
 function updateTaskPriority(taskId, newPriority) {
-    // Missing: typeof check for parameters
-    // Missing: null/undefined validation
-    
-    for (var i = 0; i < taskList.length; i++) {
-        if (taskList[i].id = taskId) {  // Wrong operator (= instead of ===)
-            taskList[i].priority = newPriority;
-            return true;
+    try {
+        if (typeof taskId !== "number" || typeof newPriority !== "number") {
+            throw new Error("taskId and newPriority must both be numbers.");
         }
+
+        const task = findTaskById(taskList, taskId);
+
+        if (!task) {
+            return false;
+        }
+
+        task.priority = newPriority;
+        return true;
+    } catch (error) {
+        console.error(error.message);
+        return false;
     }
-    return false;
 }
 
-// Function that should use destructuring but doesn't
+/*
+    Pull out just the fields a caller usually needs from a task,
+    using object destructuring instead of reading each one manually.
+*/
 function getTaskDetails(task) {
-    // Should destructure task properties
-    var title = task.title;
-    var description = task.description;
-    var priority = task.priority;
-    var completed = task.completed;
-    
-    return {
-        title: title,
-        description: description,
-        priority: priority,
-        completed: completed
-    };
+    if (!task) {
+        console.error("getTaskDetails: a task is required.");
+        return null;
+    }
+
+    const { title, description, priority, completed } = task;
+    return { title, description, priority, completed };
 }
 
-// Function missing spread/rest operators
-function mergeTasks(list1, list2) {
-    // Should use spread operator
-    var merged = [];
-    for (var i = 0; i < list1.length; i++) {
-        merged.push(list1[i]);
-    }
-    for (var i = 0; i < list2.length; i++) {
-        merged.push(list2[i]);
-    }
-    return merged;
+/*
+    Combine any number of task arrays into a single array
+    using the spread operator.
+*/
+function mergeTasks(...taskLists) {
+    return taskLists.reduce((merged, list) => [...merged, ...list], []);
 }
 
-// Recursive function with error
-function countCompletedTasks(tasks, index) {
-    // Missing: base case check
-    // Missing: null/undefined check
-    
-    if (tasks[index].completed) {
-        return 1 + countCompletedTasks(tasks, index + 1);
-    } else {
-        return countCompletedTasks(tasks, index + 1);
-    }
-}
-
-// Function with Math object issues
-function calculateAveragePriority() {
-    var total = 0;
-    // Missing: check for empty array
-    for (var i = 0; i < taskList.length; i++) {
-        total = total + taskList[i].priority;
-    }
-    // Should use Math.round or toFixed
-    return total / taskList.length;
-}
-
-// Filter function with errors
+/*
+    Return only tasks at or above the given priority.
+*/
 function getHighPriorityTasks(minPriority) {
-    var highPriority = [];
-    // Should use array methods (filter)
-    for (var i = 0; i < taskList.length; i++) {
-        if (taskList[i].priority > minPriority) {
-            highPriority.push(taskList[i]);
-        }
+    if (typeof minPriority !== "number") {
+        console.error("getHighPriorityTasks: minPriority must be a number.");
+        return [];
     }
-    return highPriority;
+
+    return taskList.filter(task => task.priority >= minPriority);
 }
 
-// Object with missing methods
-var TaskManager = {
+/*
+    A single object that groups together higher-level operations
+    on the whole task list, rather than scattering them as loose functions.
+*/
+const TaskManager = {
     tasks: taskList,
-    
-    // Missing: method to add task using functional approach
-    // Missing: method using array methods (map, filter, reduce)
-    
-    getTotalTasks: function() {
+
+    getTotalTasks() {
         return this.tasks.length;
+    },
+
+    // Returns just the titles of every task - a small example of
+    // map() used as a higher-order function.
+    listTitles() {
+        return this.tasks.map(task => task.title);
+    },
+
+    // Accepts any predicate function and counts matching tasks,
+    // which makes this itself a higher-order function.
+    countWhere(predicate) {
+        if (typeof predicate !== "function") {
+            throw new Error("countWhere requires a predicate function.");
+        }
+        return this.tasks.filter(predicate).length;
+    },
+
+    countHighPriority() {
+        return this.countWhere(isHighPriority);
     }
 };
 
-// Export issues - should be a module
-// Missing: proper module exports
+export {
+    Task,
+    SubTask,
+    taskList,
+    addTask,
+    displayAllTasks,
+    findTaskByTitle,
+    updateTaskPriority,
+    getTaskDetails,
+    mergeTasks,
+    getHighPriorityTasks,
+    TaskManager
+};
